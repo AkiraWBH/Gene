@@ -1,10 +1,10 @@
 import time
 import random
-import pyautogui
 import pygetwindow as gw
 import keyboard
-from pynput import mouse
 from tkinter import Tk, filedialog, Label, Button, Listbox, Scrollbar, Toplevel, Entry
+from pynput import mouse  # Thư viện để lắng nghe sự kiện chuột
+import pyautogui
 
 def read_comments(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -25,7 +25,6 @@ class CommentBotApp:
         self.selected_window = None
         self.chat_position = None
         self.delay = 5
-        self.check_mouse_position_interval = 5000
 
         self.file_label = Label(self.root, text="Chưa chọn tệp", wraplength=300)
         self.file_label.pack(pady=10)
@@ -54,10 +53,6 @@ class CommentBotApp:
 
         self.comment_label = Label(self.root, text="", wraplength=300)
         self.comment_label.pack(pady=10)
-
-        self.listener = None
-        self.mouse_x = None
-        self.mouse_y = None
 
     def select_file(self):
         self.file_path = filedialog.askopenfilename(title="Chọn tệp bình luận", filetypes=[("Text Files", "*.txt")])
@@ -100,14 +95,17 @@ class CommentBotApp:
 
     def select_position(self):
         self.comment_label.config(text="Nhấp chuột vào vị trí bạn muốn chat. Đợi để chọn vị trí...")
-        self.listener = mouse.Listener(on_click=self.on_click)
-        self.listener.start()
 
-    def on_click(self, x, y, button, pressed):
-        if pressed:
-            self.chat_position = (x, y)
-            self.comment_label.config(text=f"Đã chọn vị trí: {self.chat_position}. Bạn có thể bắt đầu gửi bình luận.")
-            self.listener.stop()
+        # Sử dụng pynput để lắng nghe sự kiện click chuột
+        def on_click(x, y, button, pressed):
+            if pressed:  # Khi chuột được nhấn
+                self.chat_position = (x, y)  # Ghi lại tọa độ click chuột
+                self.comment_label.config(text=f"Đã chọn vị trí: {self.chat_position}. Bạn có thể bắt đầu gửi bình luận.")
+                listener.stop()  # Dừng lắng nghe sau khi click chuột
+
+        # Khởi tạo listener để lắng nghe sự kiện chuột click
+        listener = mouse.Listener(on_click=on_click)
+        listener.start()
 
     def start_typing(self):
         if not self.comments:
@@ -132,7 +130,6 @@ class CommentBotApp:
         self.running = True
         self.comment_label.config(text="Đang làm việc: Đang gửi bình luận ...")
         self.root.after(100, self.send_random_comment)
-        self.root.after(self.check_mouse_position_interval, self.check_mouse_position)
 
     def stop_typing(self):
         self.running = False
@@ -153,12 +150,8 @@ class CommentBotApp:
         if window:
             chat_window = window[0]
             chat_window.activate()
-            
-            x, y, width, height = chat_window.left, chat_window.top, chat_window.width, chat_window.height
-            chat_x = x + self.chat_position[0]
-            chat_y = y + self.chat_position[1]
-
-            pyautogui.click(chat_x, chat_y)
+            # Nhấp vào vị trí chat và gửi bình luận
+            pyautogui.click(self.chat_position[0], self.chat_position[1])
             keyboard.write(sanitized_comment, delay=0.05)
             keyboard.press_and_release('enter')
 
@@ -168,20 +161,6 @@ class CommentBotApp:
                 self.root.after(self.delay * 1000, self.send_random_comment)
         else:
             self.comment_label.config(text="Không tìm thấy cửa sổ chat.")
-
-    def check_mouse_position(self):
-        if self.running:
-            if self.chat_position:
-                mouse_x, mouse_y = pyautogui.position()
-                chat_x, chat_y = self.chat_position
-                chat_width, chat_height = 50, 20
-                
-                if not (chat_x <= mouse_x <= chat_x + chat_width and chat_y <= mouse_y <= chat_y + chat_height):
-                    pyautogui.moveTo(chat_x + chat_width // 2, chat_y + chat_height // 2)
-                    pyautogui.click()
-                    self.comment_label.config(text="Chuột ra ngoài khu vực chat. Đã di chuyển chuột trở lại và nhấp chuột.")
-
-            self.root.after(self.check_mouse_position_interval, self.check_mouse_position)
 
 root = Tk()
 app = CommentBotApp(root)
