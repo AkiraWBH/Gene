@@ -3,7 +3,7 @@ import random
 import pygetwindow as gw
 import keyboard
 from tkinter import Tk, filedialog, Label, Button, Listbox, Scrollbar, Toplevel, Entry
-from pynput import mouse  # Thư viện để lắng nghe sự kiện chuột
+from pynput import mouse  
 import pyautogui
 
 def read_comments(file_path):
@@ -96,14 +96,12 @@ class CommentBotApp:
     def select_position(self):
         self.comment_label.config(text="Nhấp chuột vào vị trí bạn muốn chat. Đợi để chọn vị trí...")
 
-        # Sử dụng pynput để lắng nghe sự kiện click chuột
         def on_click(x, y, button, pressed):
-            if pressed:  # Khi chuột được nhấn
-                self.chat_position = (x, y)  # Ghi lại tọa độ click chuột
+            if pressed:  
+                self.chat_position = (x, y)  
                 self.comment_label.config(text=f"Đã chọn vị trí: {self.chat_position}. Bạn có thể bắt đầu gửi bình luận.")
-                listener.stop()  # Dừng lắng nghe sau khi click chuột
+                listener.stop()  
 
-        # Khởi tạo listener để lắng nghe sự kiện chuột click
         listener = mouse.Listener(on_click=on_click)
         listener.start()
 
@@ -150,7 +148,6 @@ class CommentBotApp:
         if window:
             chat_window = window[0]
             chat_window.activate()
-            # Nhấp vào vị trí chat và gửi bình luận
             pyautogui.click(self.chat_position[0], self.chat_position[1])
             keyboard.write(sanitized_comment, delay=0.05)
             keyboard.press_and_release('enter')
