@@ -148,7 +148,7 @@ class CommentBotApp:
         if window:
             chat_window = window[0]
             chat_window.activate()
-            pyautogui.click(self.chat_position[0], self.chat_position[1])
+            click_in_small_area(self.chat_position[0], self.chat_position[1], range_limit=2)
             keyboard.write(sanitized_comment, delay=0.05)
             keyboard.press_and_release('enter')
 
