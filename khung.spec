@@ -1,10 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['khung.py'],
     pathex=[],
-    binaries=[],
+    binaries=[('C:/Program Files/VideoLAN/VLC/libvlc.dll', '.')],
     datas=[],
     hiddenimports=[],
     hookspath=[],
@@ -14,6 +13,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+
 pyz = PYZ(a.pure)
 
 exe = EXE(
