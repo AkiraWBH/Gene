@@ -138,17 +138,9 @@ class CommentBotApp:
         self.volume_slider.set(100)
         self.volume_slider.grid(row=1, column=1, columnspan=2, padx=5, pady=5, sticky="ew")
 
-        self.current_song_label = Label(self.music_frame, textvariable=self.current_song_info, bg='#d9d9d9')
-        self.current_song_label.grid(row=2, column=0, columnspan=3, pady=5, sticky="w")
+        self.current_song_label = Label(self.music_frame, textvariable=self.current_song_info, bg='#d9d9d9', wraplength=200, anchor="center", justify="center")
+        self.current_song_label.grid(row=2, column=0, columnspan=3, pady=5, sticky="ew")
 
-        # Xóa các Label cho thời gian đã chạy và thời gian còn lại
-        # self.current_time_label = Label(self.music_frame, text="Thời gian đã chạy: 0 giây", bg='#d9d9d9')
-        # self.current_time_label.grid(row=3, column=0, columnspan=3, pady=5, sticky="w")
-
-        # self.remaining_time_label = Label(self.music_frame, text="Thời gian còn lại: 0 giây", bg='#d9d9d9')
-        # self.remaining_time_label.grid(row=4, column=0, columnspan=3, pady=5, sticky="w")
-
-        # Thêm Label mới để hiển thị tổng thời gian
         self.total_time_label = Label(self.music_frame, text="00:00:00/00:00:00", bg='#d9d9d9', font=('Helvetica', 12))
         self.total_time_label.grid(row=3, column=0, columnspan=3, pady=5, sticky="nsew")
 
@@ -158,9 +150,9 @@ class CommentBotApp:
         self.music_frame.columnconfigure([0, 1, 2], weight=1)
         self.music_frame.rowconfigure([0, 1, 2, 3, 4], weight=1)
 
-        self.root.bind_all("<MouseWheel>", self.on_mouse_wheel)  # Windows
-        self.root.bind_all("<Button-4>", self.on_mouse_wheel)  # Linux
-        self.root.bind_all("<Button-5>", self.on_mouse_wheel)  # Linux
+        self.root.bind_all("<MouseWheel>", self.on_mouse_wheel)
+        self.root.bind_all("<Button-4>", self.on_mouse_wheel)
+        self.root.bind_all("<Button-5>", self.on_mouse_wheel)
 
     def select_file(self):
         self.file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
